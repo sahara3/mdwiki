@@ -1,22 +1,22 @@
-var createIndex = function (grunt, taskname) {
+var createOutput = function (grunt, basename, taskname) {
     'use strict';
-    var conf = grunt.config('index')[taskname],
+    var conf = grunt.config(basename)[taskname],
         tmpl = grunt.file.read(conf.template);
 
     // register the task name in global scope so we can access it in the .tmpl file
-    grunt.config.set('currentTask', {name: taskname});
+    grunt.config.set('currentTask', { name: taskname });
 
     grunt.file.write(conf.dest, grunt.template.process(tmpl));
     grunt.log.writeln('Generated \'' + conf.dest + '\' from \'' + conf.template + '\'');
 };
 
 /*global module:false*/
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     'use strict';
     // Project configuration.
 
     grunt.initConfig({
-    // Metadata.
+        // Metadata.
         pkg: {
             name: 'MDwiki',
             version: '0.6.3'
@@ -39,6 +39,7 @@ module.exports = function(grunt) {
             'js/gimmicks/colorbox.js',
             'js/gimmicks/carousel.js',
             'js/gimmicks/disqus.js',
+            'js/gimmicks/editme.js',
             'js/gimmicks/facebooklike.js',
             'js/gimmicks/forkmeongithub.js',
             //'js/gimmicks/github_gist.js',
@@ -57,36 +58,26 @@ module.exports = function(grunt) {
 
         // files that we always inline (stuff not available on CDN)
         internalCssFiles: [
-            'extlib/css/colorbox.css'
         ],
         // ONLY PUT ALREADY MINIFIED FILES IN HERE!
         internalJsFiles: [
-            'extlib/js/jquery.colorbox.min.js'
-        ],
-
-        // files that we inline in the fat release (basically everything)
-        // ONLY PUT ALREADY MINIFIED FILES IN HERE!
-        externalJsFiles: [
-            'extlib/js/jquery-1.8.3.min.js',
-            'extlib/js/bootstrap-3.0.0.min.js',
-            'extlib/js/prism.1.4.1.min.js'
-        ],
-        externalCssFiles: [
-            'extlib/css/bootstrap-3.0.0.min.css',
-            'extlib/css/prism.1.4.1.default.min.css'
         ],
 
         // references we add in the slim release (stuff available on CDN locations)
         externalJsRefs: [
-            'ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
-            'netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js',
-            'raw.azureedge.net/joelself/mdwiki/0.6.x.0/extlib/js/prism.1.4.1.min.js'
+            'https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js',
+            'https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js',
+            'https://cdn.jsdelivr.net/npm/prismjs@1.15.0/prism.min.js',
+            'https://cdn.jsdelivr.net/npm/jquery-colorbox@1.6.4/jquery.colorbox.min.js'
         ],
         externalCssRefs: [
-            'netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css',
-            'raw.azureedge.net/joelself/mdwiki/0.6.x.0/extlib/css/prism.1.4.1.default.min.css'
-//            'www.3solarmasses.com/retriever-bootstrap/css/retriever.css'
-//            '3solarmasses.com/corgi-bootstrap/css/corgi.css'
+            'https://fonts.googleapis.com/css?family=Roboto+Mono',
+            'https://fonts.googleapis.com/icon?family=Material+Icons',
+            'https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css',
+            'https://cdn.jsdelivr.net/npm/prismjs@1.15.0/themes/prism.css',
+            'https://cdn.jsdelivr.net/npm/jquery-colorbox@1.6.4/example1/colorbox.css'
+            //            'www.3solarmasses.com/retriever-bootstrap/css/retriever.css'
+            //            '3solarmasses.com/corgi-bootstrap/css/corgi.css'
         ],
 
         concat: {
@@ -109,17 +100,23 @@ module.exports = function(grunt) {
             }
         },
         index: {
-            fat: {
-                template: 'index.tmpl',
-                dest: 'dist/mdwiki.html'
-            },
             slim: {
                 template: 'index.tmpl',
-                dest: 'dist/mdwiki-slim.html'
+                dest: 'dist/mdwiki.html'
             },
             debug: {
                 template: 'index.tmpl',
                 dest: 'dist/mdwiki-debug.html'
+            }
+        },
+        editor: {
+            slim: {
+                template: 'editor.tmpl',
+                dest: 'dist/mdwiki-editor.html'
+            },
+            debug: {
+                template: 'editor.tmpl',
+                dest: 'dist/mdwiki-editor-debug.html'
             }
         },
         /* make it use .jshintrc */
@@ -128,7 +125,7 @@ module.exports = function(grunt) {
                 curly: false,
                 eqeqeq: true,
                 immed: true,
-                latedef: true,
+                latedef: false,
                 newcap: true,
                 noarg: true,
                 sub: true,
@@ -160,28 +157,22 @@ module.exports = function(grunt) {
             src: ['lib/**/*.js', 'test/**/*.js']
         },
         copy: {
-            release_fat: {
-                expand: false,
-                flatten: true,
-                src: [ 'dist/mdwiki.html' ],
-                dest: 'release/mdwiki-<%= grunt.config("pkg").version %>/mdwiki.html'
-            },
             release_slim: {
                 expand: false,
                 flatten: true,
-                src: [ 'dist/mdwiki-slim.html' ],
-                dest: 'release/mdwiki-<%= grunt.config("pkg").version %>/mdwiki-slim.html'
+                src: ['dist/mdwiki.html', 'dist/mdwiki-editor.html'],
+                dest: 'release/mdwiki-<%= grunt.config("pkg").version %>/'
             },
             release_debug: {
                 expand: false,
                 flatten: true,
-                src: [ 'dist/mdwiki-debug.html' ],
-                dest: 'release/mdwiki-<%= grunt.config("pkg").version %>/mdwiki-debug.html'
+                src: ['dist/mdwiki-debug.html', 'dist/mdwiki-editor-debug.html'],
+                dest: 'release/mdwiki-<%= grunt.config("pkg").version %>/'
             },
             release_templates: {
                 expand: true,
                 flatten: true,
-                src: [ 'release_templates/*' ],
+                src: ['release_templates/*'],
                 dest: 'release/mdwiki-<%= grunt.config("pkg").version %>/'
             }
         },
@@ -217,32 +208,31 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-reload');
 
-    grunt.registerTask('index_slim', 'Generate slim mdwiki.html, most scripts on CDN', function() {
-        createIndex(grunt, 'slim');
+    grunt.registerTask('index_slim', 'Generate slim mdwiki.html', function () {
+        createOutput(grunt, 'index', 'slim');
     });
-
-    grunt.registerTask('index_fat', 'Generate mdwiki-fat.html, inline all scripts', function() {
-        createIndex(grunt, 'fat');
+    grunt.registerTask('index_debug', 'Generate slim mdwiki.html with debugging', function () {
+        createOutput(grunt, 'index', 'debug');
     });
-    grunt.registerTask('index_debug', 'Generate mdwiki-fat.html, inline all scripts', function() {
-        createIndex(grunt, 'debug');
+    grunt.registerTask('editor_slim', 'Generate slim mdwiki-editor.html', function () {
+        createOutput(grunt, 'editor', 'slim');
     });
-    grunt.registerTask('release-slim',[  'jshint', 'concat:dev', 'uglify:dist', 'index_slim' ]);
-    grunt.registerTask('release-fat', [ 'jshint', 'concat:dev', 'uglify:dist', 'index_fat' ]);
+    grunt.registerTask('editor_debug', 'Generate slim mdwiki-editor.html with debugging', function () {
+        createOutput(grunt, 'editor', 'debug');
+    });
+    grunt.registerTask('release-slim', ['jshint', 'concat:dev', 'uglify:dist', 'index_slim', 'editor_slim']);
+    grunt.registerTask('release-debug', ['jshint', 'concat:dev', 'index_debug', 'editor_debug']);
 
-    /* Debug is basically the fat version but without any minifing */
-    grunt.registerTask('release-debug', [ 'jshint', 'concat:dev', 'index_debug' ]);
+    grunt.registerTask('devel', ['release-debug', 'reload', 'watch']);
 
-    grunt.registerTask('devel', [ 'release-debug', 'reload', 'watch' ]);
-
-    grunt.registerTask('release',[
-        'release-slim', 'release-fat', 'release-debug',
-        'copy:release_slim', 'copy:release_fat', 'copy:release_debug', 'copy:release_templates',
+    grunt.registerTask('release', [
+        'release-slim', 'release-debug',
+        'copy:release_slim', 'copy:release_debug', 'copy:release_templates',
         'shell:zip_release'
     ]);
     // Default task.
     grunt.registerTask('default',
-        [ 'release-slim', 'release-fat', 'release-debug' ]
+        ['release-slim', 'release-debug']
     );
 
 };

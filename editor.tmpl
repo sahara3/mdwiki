@@ -8,7 +8,7 @@
    See http://github.com/Dynalon/mdwiki for a copy of the source code.
 -->
 <head>
-    <title>MDwiki</title>
+    <title>MDwiki Editor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="fragment" content="!">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
@@ -17,75 +17,26 @@
     /* hide the main content while we assemble everything */
     .md-hidden-load { display: none; }
 
-    .anchor-highlight {
-        font-size: 0.7em;
-        margin-left: 0.25em;
-    }
-    /* for pageContentMenu */
-    #md-page-menu {
-            position: static;
-    }
-    #md-page-menu a.active {
-        /* background-color: rgba(0, 0, 0, 0.01); */
-        font-weight: bold;
-        padding-left: 6px;
-
-    }
-    @media (min-width: 992px) {
-        #md-page-menu.affix {
-            position: fixed;
-            width: 212.5px;
-        }
-    }
-    @media (min-width: 768px) {
-        .md-float-left .col-sm-8, .md-float-right .col-sm-8 {
-            max-width: 66.67%;
-        }
-        .md-float-left .col-sm-4, .md-float-right .col-sm-4  {
-            max-width: 33.33%;
-        }
-        .md-float-left .col-sm-2, .md-float-right .col-sm-2 {
-            max-width: 16.67%;
-        }
-
-    }
-    @media (max-width: 992px) {
-        a.forkmeongithub {
-            display: none;
-        }
-    }
-    @media (max-width: 768px) {
-        /* don't use floating for smaller screens */
-        .md-float-left .col-sm-8, .md-float-left .col-sm-4, .md-float-left .col-sm-2 {
-            width: 100%;
-            max-width: !important;
-            min-width: 100%;
-        }
-        .md-float-right .col-sm-8, .md-float-right .col-sm-4, .md-float-right .col-sm-2 {
-            width: 100%;
-            max-width: !important;
-            min-width: 100%;
-        }
+    #md-editor {
+        height: 100vh;
+        display: flex;
+        flex-flow: column wrap;
     }
 
-    .md-floatenv .md-text {
-        /* md-text is not of md-col-* but needs the spacing */
-        margin-left: 15px;
-        margin-right: 15px;
+    #md-editor > * {
+        display: block;
     }
 
-    /* float images */
-    .md-float-left .col-sm-8, .md-float-left .col-sm-4, .md-float-left .col-sm-2 {
-        width: auto;
+    #md-editor textarea {
+        font-family: monospace;
     }
-    .md-float-right .col-sm-8, .md-float-right .col-sm-4, .md-float-right .col-sm-2 {
-        float: right !important;
-        width: auto;
+
+    #md-editor-text {
+        flex: auto;
     }
-    #md-all .md-copyright-footer {
-        background-color: !important;
-        font-size: smaller;
-        padding: 1em;
+
+    .md-editor-fixed {
+        flex: none;
     }
     </style>
 
@@ -160,6 +111,9 @@
     }
 
 %>
+    <script type="text/javascript">
+        $.md.editor = true;
+    </script>
 </head>
 <body>
     <noscript>
@@ -167,7 +121,15 @@
         and reload the page.
     </noscript>
 
-    <div id="md-all">
-    </div>
+    <form id="md-editor">
+        <h1 id="md-editor-title" class="md-editor-fixed h3">Edit</h1>
+        <input id="md-editor-path" type="hidden" name="path">
+        <textarea id="md-editor-text" name="text" class="form-control"></textarea>
+        <div class="md-editor-fixed md-editor-buttons">
+            <button class="btn btn-primary">Save</button>
+            <button class="btn btn-default" type="button" onclick="history.back();">Cancel</button>
+            <a href="http://dynalon.github.io/mdwiki/#!quickstart.md" target="_blank">MDwiki Quick Start</a>
+        </div>
+    </form>
 </body>
 </html>

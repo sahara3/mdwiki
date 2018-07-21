@@ -538,6 +538,54 @@
             window.location.hash = newHashString;
     }
 
+    function loadEditorContent(href) {
+        var originalHref = href;
+        if (href.startsWith('/')) {
+            // prevent cross-domain inclusions to prevent possible XSS
+            href = '/./' + href;
+        } else {
+            href = './' + href;
+        }
+        $.md.mainHref = href;
+
+        var form = $('#md-editor');
+        var textarea = $('#md-editor-text');
+        $('#md-editor-path').val($.md.mainHref);
+        $('#md-editor-title').text('Edit of '+ originalHref);
+
+        if (location.search) {
+            var params = location.search.substring(1).split('&');
+            $(params).each(function(i) {
+                var pair = params[i].split('=');
+                if (pair[0] === 'm') {
+                    form.attr('method', decodeURIComponent(pair[1]));
+                } else if (pair[0] === 'a') {
+                    var url = decodeURIComponent(pair[1]);
+                    if (url.startsWith('/')) {
+                        url = '/./' + url;
+                    } else {
+                        url = './' + url;
+                    }
+                    form.attr('action', url);
+                }
+            });
+        }
+
+        $('html').removeClass('md-hidden-load');
+
+        // Request the md page
+        var ajaxReq = {
+            url: $.md.mainHref,
+            dataType: 'text'
+        };
+        $.ajax(ajaxReq).done(function(data) {
+            textarea.val(data);
+        })
+        .fail(function() {
+            // Leave textarea empty if failed to find the md page we were looking for
+        });
+    }
+
     $(document).ready(function () {
 
         // stage init stuff
@@ -551,6 +599,10 @@
             window.location.reload(false);
         });
 
-        loadContent($.md.mainHref);
+        if ($.md.editor) {
+            loadEditorContent($.md.mainHref);
+        } else {
+            loadContent($.md.mainHref);
+        }
     });
 }(jQuery));

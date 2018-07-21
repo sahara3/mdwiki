@@ -47,4 +47,7 @@
     // $.md.logThreshold = $.md.loglevel.DEBUG;
     $.md.logThreshold = $.md.loglevel.WARN;
 
+    // for editor mode.
+    $.md.editor = false;
+
 }(jQuery));

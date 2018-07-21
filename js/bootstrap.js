@@ -258,12 +258,16 @@
             // if the page menu is affixed, it is not a child of the
             // <md-left-column> anymore and therefore does not inherit
             // its width. On every resize, change the class accordingly
-            var width_left_column = $('#md-left-column').css('width');
-            $('#md-page-menu').css('width', width_left_column);
+            if (window.innerWidth >= 1200) {
+                // TODO width should be calculated automatically.
+                $('#md-page-menu').css('width', '262.5px');
+            } else {
+                $('#md-page-menu').css('width', '');
+            }
         };
 
         $(window).scroll(function() {
-            recalc_width($('#md-page-menu'));
+            recalc_width();
             var $first;
             $('*.md-inpage-anchor').each(function(i,e) {
                 if ($first === undefined) {
@@ -318,7 +322,7 @@
         });
 
         $(window).resize(function () {
-            recalc_width($('#md-page-menu'));
+            recalc_width();
             check_offset_to_navbar();
         });
         $.md.stage('postgimmick').subscribe(function (done) {
