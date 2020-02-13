@@ -65,16 +65,16 @@ module.exports = function (grunt) {
 
         // references we add in the slim release (stuff available on CDN locations)
         externalJsRefs: [
-            'https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js',
-            'https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js',
-            'https://cdn.jsdelivr.net/npm/prismjs@1.15.0/prism.min.js',
+            'https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js',
+            'https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js',
+            'https://cdn.jsdelivr.net/npm/prismjs@1.19.0/prism.min.js',
             'https://cdn.jsdelivr.net/npm/jquery-colorbox@1.6.4/jquery.colorbox.min.js'
         ],
         externalCssRefs: [
             'https://fonts.googleapis.com/css?family=Roboto+Mono',
             'https://fonts.googleapis.com/icon?family=Material+Icons',
-            'https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css',
-            'https://cdn.jsdelivr.net/npm/prismjs@1.15.0/themes/prism.css',
+            'https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css',
+            'https://cdn.jsdelivr.net/npm/prismjs@1.19.0/themes/prism.css',
             'https://cdn.jsdelivr.net/npm/jquery-colorbox@1.6.4/example1/colorbox.css'
             //            'www.3solarmasses.com/retriever-bootstrap/css/retriever.css'
             //            '3solarmasses.com/corgi-bootstrap/css/corgi.css'
@@ -191,12 +191,11 @@ module.exports = function (grunt) {
                 'js/**/*.js',
                 'index.tmpl'
             ],
-            tasks: ['devel']
+            tasks: ['devel'],
+	    options: {
+		livereload: true,
+	    }
         },
-        reload: {
-            port: 35729,
-            liveReload: {}
-        }
     });
 
     // These plugins provide necessary tasks.
@@ -206,7 +205,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-shell');
-    grunt.loadNpmTasks('grunt-reload');
 
     grunt.registerTask('index_slim', 'Generate slim mdwiki.html', function () {
         createOutput(grunt, 'index', 'slim');
