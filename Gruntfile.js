@@ -53,7 +53,8 @@ module.exports = function (grunt) {
             'js/gimmicks/twitter.js',
             'js/gimmicks/youtube_embed.js',
             'js/gimmicks/chart.js',
-            'js/gimmicks/yuml.js'
+            'js/gimmicks/yuml.js',
+            'js/gimmicks/mermaid.js',
         ],
 
         // files that we always inline (stuff not available on CDN)
@@ -192,9 +193,9 @@ module.exports = function (grunt) {
                 'index.tmpl'
             ],
             tasks: ['devel'],
-	    options: {
-		livereload: true,
-	    }
+            options: {
+                livereload: true,
+            }
         },
     });
 
@@ -221,7 +222,7 @@ module.exports = function (grunt) {
     grunt.registerTask('release-slim', ['jshint', 'concat:dev', 'uglify:dist', 'index_slim', 'editor_slim']);
     grunt.registerTask('release-debug', ['jshint', 'concat:dev', 'index_debug', 'editor_debug']);
 
-    grunt.registerTask('devel', ['release-debug', 'reload', 'watch']);
+    grunt.registerTask('devel', ['release-debug', 'watch']);
 
     grunt.registerTask('release', [
         'release-slim', 'release-debug',
